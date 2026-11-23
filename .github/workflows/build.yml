@@ -1,0 +1,19 @@
+name: Build macOS Universal
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Universal DockMute.app
+        run: ./scripts/build.sh
+      - name: Verify Universal Binary and Signature
+        run: |
+          lipo -info build/DockMute.app/Contents/MacOS/DockMute
+          codesign --verify --deep --strict --verbose=2 build/DockMute.app
